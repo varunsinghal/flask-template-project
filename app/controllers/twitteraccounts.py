@@ -36,13 +36,14 @@ class TwitterAccountController(Controller):
         """
         Deletes an account from the database
         """
+        identifiers = {identifier_type: identifier}
         account: TwitterAccount = (
             self.session.query(TwitterAccount)
-            .filter_by(**{identifier_type: identifier})
+            .filter_by(**identifiers)
             .one_or_none()
         )
         if not account:
-            raise AccountNotFoundException()
+            raise AccountNotFoundException(identifiers)
         # delete the tweets made by the account
         (
             self.session.query(Tweet)
@@ -52,4 +53,4 @@ class TwitterAccountController(Controller):
         # delete the twitter account
         self.session.delete(account)
         self.session.commit()
-        return
+        return {}

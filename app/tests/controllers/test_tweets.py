@@ -1,31 +1,40 @@
-from commons.factories import make_tweet, make_twitter_account
+import logging
+
+from commons.database import get_session
+from commons.factories import make_tweet_factory, make_twitter_account_factory
 from commons.serializer import TweetSerializer
 from controllers.tweets import TweetController
 from tests.controllers import TestController
 
 
 class TestTweetController(TestController):
-
-    def setUp(self) -> None:
-        self.tweet_controller = TweetController()
-        self.serializer = TweetSerializer()
-        self.account = make_twitter_account()
-        self.other_account = make_twitter_account()
-        self.tweets = [make_tweet(author=self.account) for _ in range(5)]
-        self.other_tweets = [
-            make_tweet(author=self.other_account) for _ in range(20)
-        ]
-        self.tweet_controller.session.add_all(
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        account_factory = make_twitter_account_factory()
+        tweet_factory = make_tweet_factory()
+        cls.account, cls.other_account = account_factory.create_batch(2)
+        cls.tweets = tweet_factory.create_batch(5, author=cls.account)
+        cls.other_tweets = tweet_factory.create_batch(
+            20, author=cls.other_account
+        )
+        session = get_session()
+        session.add_all(
             (
                 [
-                    self.account,
-                    self.other_account,
+                    cls.account,
+                    cls.other_account,
                 ]
-                + self.tweets
-                + self.other_tweets
+                + cls.tweets
+                + cls.other_tweets
             )
         )
-        self.tweet_controller.session.commit()
+        session.commit()
+
+    def setUp(self) -> None:
+        self.log = logging.getLogger(__class__.__name__)
+        self.tweet_controller = TweetController()
+        self.serializer = TweetSerializer()
 
     def test_get_tweet(self):
         expected_tweet = self.tweets[0]
