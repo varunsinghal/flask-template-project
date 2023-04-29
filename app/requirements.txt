@@ -2,3 +2,10 @@ Flask
 Flask-Cors
 ipython
 psycopg2
+black
+isort 
+flake8
+factory-boy
+marshmallow
+SQLAlchemy 
+coverage
