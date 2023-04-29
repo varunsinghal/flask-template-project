@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 
+from commons.enums import IdentifierTypeEnum
 from commons.serializer import TweetSerializer
 from controllers.tweets import TweetController
 
@@ -25,7 +26,9 @@ def get_account_tweets(identifier: str):
     query params:
     identifier_type: Union['id','screen_name']
     """
-    identifier_type = request.args.get("identifier_type")
+    identifier_type = IdentifierTypeEnum(
+        request.args.get("identifier_type")
+    ).value
     tweets = tweet_controllers.get_account_tweets(identifier, identifier_type)
     return tweet_serializer.dump(tweets, many=True)
 
@@ -45,7 +48,9 @@ def get_top_account_tweets(identifier: str):
     query params:
     identifier_type: Union['id','screen_name']
     """
-    identifier_type = request.args.get("identifier_type")
+    identifier_type = IdentifierTypeEnum(
+        request.args.get("identifier_type")
+    ).value
     tweets = tweet_controllers.get_account_top_tweets(
         identifier, identifier_type
     )

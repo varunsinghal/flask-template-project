@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 
+from commons.enums import IdentifierTypeEnum
 from commons.serializer import TwitterAccountSerializer
 from controllers.twitteraccounts import TwitterAccountController
 
@@ -27,7 +28,9 @@ def get_delete_twitter_account(identifier: str):
     query params:
     identifier_type: Union['id','screen_name']
     """
-    identifier_type = request.args.get("identifier_type")
+    identifier_type = IdentifierTypeEnum(
+        request.args.get("identifier_type")
+    ).value
     if request.method == "GET":
         account = account_controller.get_account(identifier, identifier_type)
         return account_serializer.dump(account)
