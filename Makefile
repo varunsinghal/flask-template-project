@@ -28,3 +28,10 @@ lint_check:
 
 serve:
 	docker compose exec -T flask python main.py
+
+test:
+	docker-compose exec -T flask bash -c "python3 -m unittest discover tests -t . -v "
+
+test_coverage:
+	docker-compose exec -T flask bash -c "coverage run --source=. -m unittest discover tests -t ."
+	docker-compose exec -T flask bash -c "coverage report -m --omit=tests/*"

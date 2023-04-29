@@ -48,14 +48,17 @@ def create_app(test_config=None):
 
 
 def setup_database(app):
-    db_credentials = {
-        "username": os.getenv("POSTGRES_USER"),
-        "password": os.getenv("POSTGRES_PASSWORD"),
-        "hostname": os.getenv("POSTGRES_HOSTNAME"),
-        "database": os.getenv("POSTGRES_DATABASE"),
-        "port": os.getenv("POSTGRES_PORT"),
-    }
-    connection_uri = get_connection_uri(**db_credentials)
+    if app.config.get("SQLALCHEMY_DATABASE_URI"):
+        connection_uri = app.config["SQLALCHEMY_DATABASE_URI"]
+    else:
+        db_credentials = {
+            "username": os.getenv("POSTGRES_USER"),
+            "password": os.getenv("POSTGRES_PASSWORD"),
+            "hostname": os.getenv("POSTGRES_HOSTNAME"),
+            "database": os.getenv("POSTGRES_DATABASE"),
+            "port": os.getenv("POSTGRES_PORT"),
+        }
+        connection_uri = get_connection_uri(**db_credentials)
     initialize_session(connection_uri)
 
 
