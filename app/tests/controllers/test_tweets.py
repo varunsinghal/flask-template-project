@@ -1,6 +1,5 @@
 import logging
 
-from commons.database import get_session
 from commons.factories import make_tweet_factory, make_twitter_account_factory
 from commons.serializer import TweetSerializer
 from controllers.tweets import TweetController
@@ -18,8 +17,7 @@ class TestTweetController(TestController):
         cls.other_tweets = tweet_factory.create_batch(
             20, author=cls.other_account
         )
-        session = get_session()
-        session.add_all(
+        cls.session.add_all(
             (
                 [
                     cls.account,
@@ -29,11 +27,11 @@ class TestTweetController(TestController):
                 + cls.other_tweets
             )
         )
-        session.commit()
+        cls.session.commit()
 
     def setUp(self) -> None:
         self.log = logging.getLogger(__class__.__name__)
-        self.tweet_controller = TweetController()
+        self.tweet_controller = TweetController(self.session)
         self.serializer = TweetSerializer()
 
     def test_get_tweet(self):

@@ -2,8 +2,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
-from commons.exceptions import DatabaseSessionNotInitialized
-
 DATABASE_URI = (
     "postgresql+psycopg2://{username}:{password}@{hostname}:{port}/{database}"
 )
@@ -19,8 +17,6 @@ def get_engine() -> Engine:
 
 
 def get_session() -> Session:
-    if not Database.session:
-        raise DatabaseSessionNotInitialized()
     return Database.session
 
 
@@ -33,9 +29,16 @@ def initialize_session(connection_uri: str, echo: bool = True):
     Database.session = scoped_session(sessionmaker(bind=Database.engine))
 
 
+def destroy_session():
+    Database.session = None
+    Database.engine = None
+
+
 def rollback_session():
-    Database.session.rollback()
+    if Database.session:
+        Database.session.rollback()
 
 
 def close_session():
-    Database.session.remove()
+    if Database.session:
+        Database.session.remove()

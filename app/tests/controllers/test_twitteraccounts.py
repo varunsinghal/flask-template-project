@@ -1,4 +1,3 @@
-from commons.database import get_session
 from commons.exceptions import AccountNotFoundException
 from commons.factories import make_tweet_factory, make_twitter_account_factory
 from commons.models import Tweet, TwitterAccount
@@ -9,10 +8,9 @@ from tests.controllers import TestController
 
 class TestTweetController(TestController):
     def setUp(self) -> None:
-        self.session = get_session()
         self.account_factory = make_twitter_account_factory()
         self.tweet_factory = make_tweet_factory()
-        self.account_controller = TwitterAccountController()
+        self.account_controller = TwitterAccountController(self.session)
         self.serializer = TwitterAccountSerializer()
 
     def tearDown(self) -> None:

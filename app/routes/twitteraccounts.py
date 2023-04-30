@@ -1,11 +1,12 @@
 from flask import Blueprint, request
 
+from commons.database import get_session
 from commons.enums import IdentifierTypeEnum
 from commons.serializer import TwitterAccountSerializer
 from controllers.twitteraccounts import TwitterAccountController
 
 twitteraccount = Blueprint("twitteraccount", __name__)
-account_controller = TwitterAccountController()
+account_controller = TwitterAccountController(get_session())
 account_serializer = TwitterAccountSerializer()
 
 

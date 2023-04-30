@@ -4,13 +4,13 @@ from unittest.mock import patch
 from commons.database import (
     Database,
     close_session,
+    destroy_session,
     get_connection_uri,
     get_engine,
     get_session,
     initialize_session,
     rollback_session,
 )
-from commons.exceptions import DatabaseSessionNotInitialized
 
 
 class TestDatabase(TestCase):
@@ -19,6 +19,9 @@ class TestDatabase(TestCase):
         self.scoped_session = patch("commons.database.scoped_session").start()
         self.addCleanup(patch.stopall)
         initialize_session("connection-uri")
+
+    def tearDown(self) -> None:
+        destroy_session()
 
     def test_get_connection_uri(self):
         actual = get_connection_uri(
@@ -47,11 +50,6 @@ class TestDatabase(TestCase):
         close_session()
         get_session().remove.assert_called_once()
 
-    def test_get_session_with_empty_session(self):
-        Database.session = None
-        with self.assertRaises(DatabaseSessionNotInitialized):
-            get_session()
-
     def test_get_session(self):
         session = get_session()
         self.assertEqual(session, self.scoped_session.return_value)
@@ -59,3 +57,8 @@ class TestDatabase(TestCase):
     def test_get_engine(self):
         engine = get_engine()
         self.assertEqual(engine, self.create_engine.return_value)
+
+    def test_destroy_session(self):
+        destroy_session()
+        self.assertIsNone(Database.session)
+        self.assertIsNone(Database.engine)

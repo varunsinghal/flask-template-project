@@ -10,7 +10,6 @@ class TestRoutes(TestCase):
             {
                 "TESTING": True,
                 "DEBUG": True,
-                "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
             }
         )
         cls.headers = {}
