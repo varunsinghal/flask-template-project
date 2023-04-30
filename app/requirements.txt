@@ -9,3 +9,4 @@ factory-boy
 marshmallow
 SQLAlchemy 
 coverage
+cachelib

@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 
+from commons.cache import ttl_cache
 from commons.enums import IdentifierTypeEnum
 from commons.serializer import TweetSerializer
 from controllers.tweets import TweetController
@@ -10,6 +11,7 @@ tweet_serializer = TweetSerializer()
 
 
 @tweets.route("/<string:id>", methods=["GET"])
+@ttl_cache
 def get_tweet(id: str):
     """
     id: the int64 tweet id
