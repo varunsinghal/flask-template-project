@@ -53,7 +53,7 @@ class TestTtlCache(TestCase):
         ttl_cache(self.demo)()
         self.costly_operation.assert_called_once()
 
-    def test_ttl_cache_with_args(self):
+    def test_ttl_cache_with_same_args(self):
         computed = ttl_cache(self.demo)("arg-1", "arg-2")
         cached = ttl_cache(self.demo)("arg-1", "arg-2")
         self.costly_operation.assert_called_once()

@@ -8,6 +8,12 @@ logger = logging.getLogger(__name__)
 
 
 class Cache:
+    """
+    Cache class used to interact with the rest of the code.
+    The strategy can be replaced with other implementations
+    without impacting the cache behavior.
+    """
+
     def __init__(self, strategy) -> None:
         self.strategy = strategy
 
@@ -35,6 +41,14 @@ _cache = Cache(strategy=SimpleCache(threshold=300, default_timeout=20))
 
 
 def ttl_cache(func, cache_cls: Optional[Cache] = _cache):
+    """
+    Cache the output of the function provided in `func`.
+    Builds the key using the function name and arguments provided.
+    The default timeout for the cache is 20 seconds.
+    The optional `cache_cls` is provided to override the behavior with
+    other cache utility.
+    """
+
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         key = cache_cls.hashkey(func, *args)
