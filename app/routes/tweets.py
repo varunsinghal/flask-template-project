@@ -1,12 +1,13 @@
 from flask import Blueprint, request
 
 from commons.cache import ttl_cache
+from commons.database import get_session
 from commons.enums import IdentifierTypeEnum
 from commons.serializer import TweetSerializer
 from controllers.tweets import TweetController
 
 tweets = Blueprint("tweets", __name__)
-tweet_controllers = TweetController()
+tweet_controllers = TweetController(get_session())
 tweet_serializer = TweetSerializer()
 
 

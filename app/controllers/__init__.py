@@ -1,11 +1,11 @@
 import logging
 from uuid import uuid4
 
-from commons.database import get_session
+from sqlalchemy.orm import Session
 
 
 class Controller:
-    def __init__(self):
+    def __init__(self, session: Session):
         self.log = logging.getLogger(__class__.__name__)
         self.request_id = uuid4().hex
-        self.session = get_session()
+        self.session = session

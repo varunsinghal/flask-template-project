@@ -2,15 +2,10 @@ import logging
 import os
 from unittest import TestCase
 
-from sqlalchemy import text
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import scoped_session, sessionmaker
 
-from commons.database import (
-    close_session,
-    get_connection_uri,
-    get_engine,
-    get_session,
-    initialize_session,
-)
+from commons.database import get_connection_uri
 from commons.models import Model
 
 
@@ -25,16 +20,16 @@ class TestController(TestCase):
             "port": os.getenv("POSTGRES_PORT"),
         }
         connection_uri = get_connection_uri(**db_credentials)
-        initialize_session(connection_uri, echo=False)
-        Model.metadata.create_all(get_engine())
+        engine = create_engine(connection_uri, echo=False)
+        Model.metadata.create_all(engine)
+        cls.session = scoped_session(sessionmaker(bind=engine))
 
     @classmethod
     def tearDownClass(cls) -> None:
-        session = get_session()
         for tbl in reversed(Model.metadata.sorted_tables):
             try:
-                session.execute(text("DROP TABLE IF EXISTS " + tbl.name))
-                session.commit()
+                cls.session.execute(text("DROP TABLE IF EXISTS " + tbl.name))
+                cls.session.commit()
             except Exception:
                 logging.info("Skipping %r" % tbl)
-        close_session()
+        cls.session.remove()
