@@ -3,13 +3,13 @@ from unittest.mock import MagicMock
 
 from cachelib import SimpleCache
 
-from commons.cache import Cache, ttl_cache
+from commons.cache import CacheAdaptor, ICache, ttl_cache
 
 
 class TestCache(TestCase):
     def setUp(self) -> None:
-        self.cache_strategy = MagicMock(spec=SimpleCache)
-        self.cache = Cache(strategy=self.cache_strategy)
+        self.cache_impl = MagicMock(spec=SimpleCache)
+        self.cache: ICache = CacheAdaptor(adaptee=self.cache_impl)
 
     def test_hashkey(self):
         def demo():
@@ -20,23 +20,23 @@ class TestCache(TestCase):
         self.assertEqual(actual, expected)
 
     def test_has(self):
-        self.cache_strategy.has.return_value = True
+        self.cache_impl.has.return_value = True
         self.assertTrue(self.cache.has("key"))
 
     def test_get(self):
-        self.cache_strategy.get.return_value = "value"
+        self.cache_impl.get.return_value = "value"
         self.assertEqual(self.cache.get("key"), "value")
 
     def test_set(self):
-        self.cache_strategy.set.return_value = True
+        self.cache_impl.set.return_value = True
         self.assertTrue(self.cache.set("key", "value"))
 
     def test_delete(self):
-        self.cache_strategy.delete.return_value = True
+        self.cache_impl.delete.return_value = True
         self.assertTrue(self.cache.delete("key"))
 
     def test_clear(self):
-        self.cache_strategy.clear.return_value = True
+        self.cache_impl.clear.return_value = True
         self.assertTrue(self.cache.clear())
 
 
