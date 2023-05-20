@@ -12,9 +12,6 @@ The Flask template project is a comprehensive starter template showcasing best p
 
 <br>
 
---- 
-
-<br>
 
 ### features
 
@@ -86,10 +83,6 @@ print the test coverage report
 ```bash 
 $ make test_coverage
 ```
-
-<br>
-
----
 
 <br>
 
